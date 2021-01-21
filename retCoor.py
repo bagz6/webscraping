@@ -1,12 +1,10 @@
-# api = AIzaSyDYSs9WUjiT0d60_fuYpZx7JkFHedLWRvY
 import pandas as pd 
 import requests
 import json
 import googlemaps
 
 df = pd.read_csv("result-rumah.csv")
-# print(df)
-gmaps_key = googlemaps.Client(key = "AIzaSyDYSs9WUjiT0d60_fuYpZx7JkFHedLWRvY")
+gmaps_key = googlemaps.Client(key = "API Key")
 df['LAT'] = None
 df['LON'] = None
 
