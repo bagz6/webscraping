@@ -161,4 +161,5 @@ df.to_csv('jualRuko20210503.csv')
 
 ## Inspiration
 [Python Web Scraping: JSON in SCRIPT tags](https://www.youtube.com/watch?v=QNLBBGWEQ3Q&t=384s)
+
 [Render Dynamic Pages - Web Scraping Product Links with Python](https://www.youtube.com/watch?v=MeBU-4Xs2RU&t=307s)
