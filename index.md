@@ -163,3 +163,7 @@ df.to_csv('jualRuko20210503.csv')
 [Python Web Scraping: JSON in SCRIPT tags](https://www.youtube.com/watch?v=QNLBBGWEQ3Q&t=384s)
 
 [Render Dynamic Pages - Web Scraping Product Links with Python](https://www.youtube.com/watch?v=MeBU-4Xs2RU&t=307s)
+
+[Python Requests Tutorial: Request Web Pages, Download Images, POST Data, Read JSON, and More](https://www.youtube.com/watch?v=tb8gHvYlCFs)
+
+[How To Add A Progress Bar In Python With Just One Line - Python Tutorial](https://www.youtube.com/watch?v=FptVpIPhdpM)
