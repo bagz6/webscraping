@@ -73,16 +73,90 @@ I created some lists as follows
 - ```productlist``` contains item url in every page loaded
 the ```for``` loop after that is compiling data url into ```productlinks``` list.
 
-```python
+After compiling all the product url, now is the time to filter and look into unique url so that we can scrape efficiently
 
+```python
+for element in productlinks:
+    if element not in uproductlinks:
+        uproductlinks.append(element)
+```
+The code above provide step to filter for unique url only.
+
+### Main code
+The following is the main code to scrape all the information contains in the webpage
+
+```python
+for x in tqdm(range(0, len(uproductlinks))):
+    if x % 20 == 0:
+        time.sleep(5)
+    client     = uproductlinks[x]['url']
+    jeson      = requests.get(client, headers=headers)
+    soup       = BeautifulSoup(jeson.content, 'lxml')
+    try:
+        target = soup.find_all('script')[7].string.strip()[15:-1]
+    except:
+        continue
+    targetEdt  = target.replace('props:', '"props":')
+    targetEdt2 = targetEdt.replace('states:', '"states":')
+    targetEdt3 = targetEdt2.replace('config:', '"config":')
+    targetEdt4 = targetEdt3.replace('translations:', '"translations":')
+
+    idd        = uproductlinks[x]['url_id']
+    idds       = uproductlinks[x]['url']
+    data       = json.loads(targetEdt4)
+
+    # userId     = data['states']['users']['elements'][idd]['user_id'] #sudah expired
+    userId     = data['states']['items']['elements'][idd]['user_id'] #struktur sekarang
+    title      = data['states']['items']['elements'][idd]['title'].replace('\n', ' ')
+    deskrips   = data['states']['items']['elements'][idd]['description'].replace('\n', ' ')
+    deskripsi  = deskrips.replace('\r', ' ')
+    harga      = data['states']['items']['elements'][idd]['price']['value']['display']
+    lat        = data['states']['items']['elements'][idd]['locations'][0]['lat']
+    lon        = data['states']['items']['elements'][idd]['locations'][0]['lon']
+    nama       = data['states']['users']['elements'][userId]['name']
+
+    lb     = ' '
+    lt     = ' '
+    alamat = ' '
+    kontak = ' '
+    for isi in data['states']['items']['elements'][idd]['parameters']:
+        if isi['key_name'] == "Luas bangunan":
+            lb = isi['value']
+        if isi['key_name'] == "Luas tanah":
+            lt = isi['value']
+        if isi['key_name'] == "Alamat lokasi":
+            alamat = isi['value'].replace('\n', ' ')
+        if isi['key_name'] == "phone":
+            konta  = isi['value']
+            kontak = konta.replace('+62', '62') 
+
+    articles={
+        'userId'       : userId,
+        'adId'         : idd,
+        'Judul'        : title,
+        'LuasBangunan' : lb,
+        'LuasTanah'    : lt,
+        'Deskripsi'    : deskripsi,
+        'Harga'        : harga,
+        'Penjual'      : nama,
+        'Telpon'       : kontak,
+        'Url'          : idds,
+        'Lat'          : lat,
+        'Lon'          : lon,
+        'Alamat'       : alamat,
+    }
+    productInfo.append(articles)
+```
+For a more efficient and faster scraping, I use json structure at the webpage source code (by pressing ctrl + u) see: ```target``` variable
+After that I extract all the information needed by using corresponding code for json data structure. The rest of the code is compiling all the information I get from the scraping process, and append it to one ```productInfo``` list.
+
+The last but not least, I compile all the data I get  into csv file so that I can then process the data and place it on the map
+```python
+df = pd.DataFrame(productInfo)
+
+print(df)
+
+df.to_csv('jualRuko20210503.csv')
 ```
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/bagz6/webscraping/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+##Inspiration
