@@ -160,3 +160,4 @@ df.to_csv('jualRuko20210503.csv')
 ```
 
 ##Inspiration
+Utilizing json data structure : https://www.youtube.com/watch?v=QNLBBGWEQ3Q&t=384s
