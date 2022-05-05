@@ -198,14 +198,107 @@ I use ```try except``` in this code, because I want to ignore any error that mig
 ### Integrating data using JavaScript
 Next, I create JavaScript code to construct the maps and later can be viewed on the web.
 ```javascript
-//fullscreeen map view
-var mapId = document.getElementById('map');
-function fullScreenView(){
-    mapId.requestFullscreen();
-}
+    //map class initialize
+var map = L.map('map').setView([-8.631812, 115.201907], 10);
 
+L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+    maxZoom: 18,
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+}).addTo(map);
 ```
-## Inspiration
+I need to initialize the map, so that it can be viewed by default. In this case, the default is Bali. We can use any layer for the map, it can be openmap or anything but here I use googlemap layer. Next I add map scale and a feature so that when we hover over the map, it showed the coordinate below the map
+
+```javascript
+    //add map scale
+L.control.scale().addTo(map);
+
+//map coordinate display
+map.on('mousemove', function(e){
+    console.log(e)
+    $('.coordinate').html(`Lat: ${e.latlng.lat} Lng: ${e.latlng.lng}`)
+})
+```
+After that, I create pop-up info when I click on the marker result on the map
+```javascript
+function info(feature, layer){
+    layer.bindPopup(
+		"<h1 class='infoHeader'> Hi info </h1> <p class = 'infoHeader'>" + feature.properties.Judul + "</p>"
+		+ "<br>" + "<b>" + "Harga : " + "</b>" + feature.properties.Harga +"</br>"
+		+ "<br>" + "<b>" + "Deskripsi : " + "</b>" + feature.properties.Deskripsi + "</br>"
+		);
+};
+```
+```javascript
+var circle
+var search_marker
+
+//adding marker to the map from geojson data
+var marker = L.markerClusterGroup();
+
+var propt = L.geoJson(db, {
+	onEachFeature: info,
+	pointToLayer: function(feature, latlng){
+		return L.marker(latlng);
+	}
+}).addTo(marker);
+marker.addTo(map);
+
+function kmToMeters(km) {
+	return km * 1000;
+};
+
+function getLocation(){
+	var lat = document.getElementById("latitude").value;
+	var lng = document.getElementById("longitude").value;
+	var radius = kmToMeters($('#radius-selected').val());
+
+	if(circle) {
+        map.removeLayer(circle);
+    }
+
+	if (search_marker) {
+        map.removeLayer(search_marker);
+    }
+
+	map.setView(new L.LatLng(lat, lng), 15);
+	
+	search_marker = L.marker([lat, lng]).addTo(map)
+						.bindPopup('Lokasi yang Dicari')
+						.openPopup();
+
+	circle = L.circle({lat:lat, lng:lng},{
+				color: 'steelblue',
+				radius: radius,
+				fillColor: 'steelblue',
+				opacity: 0.3}).addTo(map)
+	//menghapus isi informasi sebelum dijalankan ulang
+	$('#ofi_paf').html('');
+	//menghitung hasil marker dalam radius
+	if (circle !== undefined){
+		circle_lat_long = circle.getLatLng();
+		var counter_points_in_circle = 0;
+		propt.eachLayer(function(layer){
+			layer_lat_long = layer.getLatLng();
+			distance_from_layer_circle = layer_lat_long.distanceTo(circle_lat_long);
+			//menampilkan informasi d dalam radius
+			if (distance_from_layer_circle <= radius) {
+				counter_points_in_circle += 1;
+				var ofi_paf_html = '<h4>' + counter_points_in_circle +  '. ' + layer.feature.properties.Judul + '</h4>';
+				ofi_paf_html += 'Jarak: ' + (distance_from_layer_circle * 0.001).toFixed(2) + 'km';
+
+				$('#ofi_paf').append(ofi_paf_html);
+			}
+		});
+		$('#ofi_paf_results').html(counter_points_in_circle);
+	}
+
+};
+
+document.getElementById("getLocation").addEventListener("click",getLocation);
+```
+
+My finish work can be viewed [here](gisproper.herokuapp.com)
+## Inspiration and Guidance
 [Python Web Scraping: JSON in SCRIPT tags](https://www.youtube.com/watch?v=QNLBBGWEQ3Q&t=384s)
 
 [Render Dynamic Pages - Web Scraping Product Links with Python](https://www.youtube.com/watch?v=MeBU-4Xs2RU&t=307s)
@@ -215,3 +308,19 @@ function fullScreenView(){
 [How To Add A Progress Bar In Python With Just One Line - Python Tutorial](https://www.youtube.com/watch?v=FptVpIPhdpM)
 
 [30 Days of Python - Day 20 - Using Google Maps Geocoding and Places API - Python TUTORIAL](https://www.youtube.com/watch?v=ckPEY2KppHc)
+
+[Leaflet Plugins database](https://leafletjs.com/plugins.html)
+
+[Leaflet formula: Markers within radius v2](https://github.com/csessig86/leaflet-markers-within-radius-v2)
+
+[Leaflet formula: Counting markers within a radius](https://csessig.wordpress.com/2014/06/22/leaflet-solution-counting-markers-within-a-radius/)
+
+[Leaflet-control-geocoder](https://github.com/perliedman/leaflet-control-geocoder)
+
+[Leaflet control geocoder positioning as texfield and icon](https://gis.stackexchange.com/questions/240299/leaflet-control-geocoder-positioning-as-texfield-and-icon)
+
+[Google Maps API - results.geometry.location[0] returning null](https://stackoverflow.com/questions/24719643/google-maps-api-results-geometry-location0-returning-null)
+
+[How can I assign the contents of a geojson file to a variable in Javascript?](https://stackoverflow.com/questions/55966676/how-can-i-assign-the-contents-of-a-geojson-file-to-a-variable-in-javascript)
+
+[Geocoding in Python Using Google Maps API](https://pyshark.com/geocoding-in-python/)
