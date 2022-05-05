@@ -193,8 +193,18 @@ First I import several packages,
 - requests, so that I can automatically run the program to connect and getting data from the Internet
 - googlemaps, so that the Google Maps API key can be used to retrieve coordinate data
 
-I use ```try except``` in this code, because I want to ignore any error that might happen from the process of retrieving coordinate. The data extracted from the website is not too good to be used for a precise location pinpont, but I want to use the data as it is (as per my early study in this project). After that, I compile the result in a csv file.
+I use ```try except``` in this code, because I want to ignore any error that might happen from the process of retrieving coordinate. The data extracted from the website is not too good to be used for a precise location pinpont, but I want to use the data as it is (as per my early study in this project). After that, I compile the result in a csv file, then I convert the csv file to json file so that it can be used to show it on the map.
 
+### Integrating data using JavaScript
+Next, I create JavaScript code to construct the maps and later can be viewed on the web.
+```javascript
+//fullscreeen map view
+var mapId = document.getElementById('map');
+function fullScreenView(){
+    mapId.requestFullscreen();
+}
+
+```
 ## Inspiration
 [Python Web Scraping: JSON in SCRIPT tags](https://www.youtube.com/watch?v=QNLBBGWEQ3Q&t=384s)
 
