@@ -158,6 +158,42 @@ print(df)
 
 df.to_csv('jualRuko20210503.csv')
 ```
+## Putting scraped data into maps
+After finish scraping the data, I have to put the data into maps so that it can be much useful and easy to analyze
+
+### Acquiring data location 
+I use simple Python code to retrieve every data coordinate using a free Google Maps API key that I get from Google Cloud. The code I use to retrieve the coordinate is as follows
+```python
+import pandas as pd 
+import requests
+import json
+import googlemaps
+
+df = pd.read_csv("result-rumah.csv")
+gmaps_key = googlemaps.Client(key = "API key")
+df['LAT'] = None
+df['LON'] = None
+
+for i in range(0, len(df), 1):
+    geocode_result = gmaps_key.geocode(df.iat[i,7])
+    try:
+        lat = geocode_result[0]['geometry']['location']['lat']
+        lon = geocode_result[0]['geometry']['location']['lng']
+        df.iat[i, df.columns.get_loc('LAT')] = lat
+        df.iat[i, df.columns.get_loc('LON')] = lon
+    except:
+        lat = None
+        lon = None
+
+print(df)
+df.to_csv('dataSource-rumah.csv')
+```
+First I import several packages, 
+- pandas, to manage data in dataframe and later convert it into csv file
+- requests, so that I can automatically run the program to connect and getting data from the Internet
+- googlemaps, so that the Google Maps API key can be used to retrieve coordinate data
+
+I use ```try except``` in this code, because I want to ignore any error that might happen from the process of retrieving coordinate. The data extracted from the website is not too good to be used for a precise location pinpont, but I want to use the data as it is (as per my early study in this project). After that, I compile the result in a csv file.
 
 ## Inspiration
 [Python Web Scraping: JSON in SCRIPT tags](https://www.youtube.com/watch?v=QNLBBGWEQ3Q&t=384s)
@@ -167,3 +203,5 @@ df.to_csv('jualRuko20210503.csv')
 [Python Requests Tutorial: Request Web Pages, Download Images, POST Data, Read JSON, and More](https://www.youtube.com/watch?v=tb8gHvYlCFs)
 
 [How To Add A Progress Bar In Python With Just One Line - Python Tutorial](https://www.youtube.com/watch?v=FptVpIPhdpM)
+
+[30 Days of Python - Day 20 - Using Google Maps Geocoding and Places API - Python TUTORIAL](https://www.youtube.com/watch?v=ckPEY2KppHc)
