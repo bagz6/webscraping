@@ -4,7 +4,7 @@
 This coding, about property price webscraping, is intended to ease my repetitive task at looking for property price on the internet. As a credit analyst, I am required to create an appraisal for property that is used as loan collateral. I am looking at multiple resources to find the suitable price such as going around neighborhood where the property is located, discuss with coworkers whether they know appropriate price for the property, and browsing prices on the internet and cross validate the price with the owner of the property. I intended to reduce repetitive task by using Python programming so that I can effectively browsing for price and work faster. After looking at multiple resources and learn for three months on how to scrape web pages and discussing with my former school mate, I finally finish the code for scraping web pages.
 
 ### Coding
-First thing first, I have to import packages as follows
+First thing first, I have to import libraries as follows
 
 ```python
 import requests
@@ -19,12 +19,12 @@ import time
 - Requests is used to explore web pages
 - Json is used to process json-structured data
 - Beautifulsoup is used to extract information on the web page developer tools
-- pandas is used to create dataframe, so that I can view the data structure before confirming that the data extracted is well structured
+- pandas is used to create dataframe, so that I can view the data structure and doing data cleaning before confirming that the data extracted is well structured
 - csv is used to convert the dataframe to csv
 - tqdm is used to view the progress of the web scraping
 - time is used to view the time elapsed in scraping
 
-After importing packages, next I create baseurl and header
+After importing libraries, next I create baseurl and header
 
 ```python
 baseurl = 'https://www.olx.co.id'
