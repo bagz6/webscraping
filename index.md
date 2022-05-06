@@ -188,7 +188,7 @@ for i in range(0, len(df), 1):
 print(df)
 df.to_csv('dataSource-rumah.csv')
 ```
-First I import several packages, 
+First I import several libraries, 
 - pandas, to manage data in dataframe and later convert it into csv file
 - requests, so that I can automatically run the program to connect and getting data from the Internet
 - googlemaps, so that the Google Maps API key can be used to retrieve coordinate data
